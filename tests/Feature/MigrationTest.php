@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Exam;
+namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +25,7 @@ class MigrationTest extends TestCase
      * Create blogs table
      *
      * @test
-    */
+     */
     public function create_blogs_table()
     {
         $this->assertTrue(
@@ -67,10 +67,8 @@ class MigrationTest extends TestCase
     public function create_foreign_key_and_index()
     {
         $constrain = collect(DB::select("PRAGMA index_list(blogs)"))
-            ->where('name', '=', 'blogs_user_id_index')->first();
+            ->where('name', '=', 'blogs_owner_id_index')->first();
 
-        $this->assertNotNull(
-            $constrain
-        );
+        $this->assertNotNull($constrain);
     }
 }

@@ -1,12 +1,11 @@
 <?php
 
-namespace Tests\Exam;
+namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
-use App\Models\Blog;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
 
@@ -25,7 +24,7 @@ use Illuminate\Validation\ValidationException;
  *
  * @package Tests\Feature\Exam
  */
-class BlogTest extends TestCase
+class CRUDTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -40,12 +39,12 @@ class BlogTest extends TestCase
 
         $this->actingAs($user)->post(route('blogs.store'), [
             'name' => 'Laravel Blog',
-            'domain' => 'blog.example.com'
+            'domain' => 'https://blog.example.com'
         ]);
 
         $this->assertDatabaseHas('blogs', [
             'name' => 'Laravel Blog',
-            'domain' => 'blog.example.com',
+            'domain' => 'https://blog.example.com',
             'owner_id' => $user->id
         ]);
     }
@@ -59,23 +58,26 @@ class BlogTest extends TestCase
      */
     public function validate_the_payload()
     {
+        $this->withoutExceptionHandling();
         $user = User::factory()->create();
         $user2 = User::factory()->create();
 
         $this->expectException(ValidationException::class);
         $nameInvalid = $this->actingAs($user)->post(route('blogs.store'), [
             'name' => '',
-            'domain' => 'blog.example.com'
+            'domain' => 'https://blog.example.com'
         ]);
 
+        $this->expectException(ValidationException::class);
         $domainInvalid = $this->actingAs($user)->post(route('blogs.store'), [
             'name' => 'Laravel Blog',
             'domain' => 'blogdomaincom',
         ]);
-
+        
+        $this->expectException(ValidationException::class);
         $ownerNotAllowToChange = $this->actingAs($user)->post(route('blogs.store'), [
             'name' => 'Laravel Blog',
-            'domain' => 'blog.example.com',
+            'domain' => 'https://blog.example.com',
             'owner_id' => $user2->id,
         ]);
         
@@ -86,6 +88,7 @@ class BlogTest extends TestCase
      */
     public function update_a_blog()
     {
+        $this->withoutExceptionHandling();
         $user = User::factory()->create();
         
         $blog = Blog::factory()->create(['owner_id' => $user->id]);
@@ -93,7 +96,7 @@ class BlogTest extends TestCase
         
         $this->put(route('blogs.update', $blog), [
             'name' => 'Laravel Blog',
-            'domain' => 'new.example.com'
+            'domain' => 'https://new.example.com'
         ]);
 
         $blog->refresh();
@@ -101,7 +104,7 @@ class BlogTest extends TestCase
         $this->assertDatabaseHas('blogs', [
             'id'  => $blog->id,
             'name' => 'Laravel Blog',
-            'domain' => 'new.example.com',
+            'domain' => 'https://new.example.com',
             'owner_id' => $user->id
         ]);
     }
@@ -157,7 +160,7 @@ class BlogTest extends TestCase
 
         $this->actingAs($user)->post(route('blogs.store'), [
             'name' => 'Laravel Blog',
-            'domain' => 'blog.example.com'
+            'domain' => 'https://blog.example.com'
         ])->assertUnauthorized();
     }
 
@@ -168,13 +171,14 @@ class BlogTest extends TestCase
      */
     public function dispatch_an_event()
     {
+        $this->withoutExceptionHandling();
         Event::fake();
 
         $user = User::factory()->create();
 
         $this->actingAs($user)->post(route('blogs.store'), [
             'name' => 'Laravel Blog',
-            'domain' => 'blog.example.com'
+            'domain' => 'https://blog.example.com'
         ]);
 
         Event::assertDispatched(\App\Events\BlogCreated::class);
@@ -189,13 +193,14 @@ class BlogTest extends TestCase
      */
     public function create_a_listener_that_will_send_an_email_to_user()
     {
+        $this->withoutExceptionHandling();
         Mail::fake();
 
         $user = User::factory()->create();
 
         $this->actingAs($user)->post(route('blogs.store'), [
                 'name' => 'Laravel Blog',
-                'domain' => 'blog.example.com'
+                'domain' => 'https://blog.example.com'
             ]);
 
         Mail::assertSent(\App\Mail\NewBlogCreated::class);

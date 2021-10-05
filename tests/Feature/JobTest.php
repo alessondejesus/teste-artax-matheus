@@ -1,10 +1,8 @@
 <?php
 
-namespace Tests\Exam;
+namespace Tests\Feature;
 
-use App\Jobs\CheckBlogsHealth;
 use App\Models\User;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
@@ -46,10 +44,12 @@ class JobTest extends TestCase
      * @test
      */
     public function make_sure_that_the_job_worked()
-    {
+    {        
+        Notification::fake();
+
         $user = User::factory()->create();
-        Blog::factory()->create(['owner_id' => $user->id, 'domain' => 'blog.example.com']);
-        Blog::factory()->create(['owner_id' => $user->id, 'domain' => 'invalid.example.com']);
+        Blog::factory()->create(['owner_id' => $user->id, 'domain' => 'https://blog.example.com']);
+        Blog::factory()->create(['owner_id' => $user->id, 'domain' => 'https://invalid.example.com']);
 
         Http::fake([
             'https://blog.example.com' => Http::response('Hello World', 200),

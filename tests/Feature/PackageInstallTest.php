@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -35,7 +36,7 @@ class PackageInstallTest extends TestCase
      */
     public function auditable_package_is_working()
     {
-        $user       = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
         $user->name = "Fulano de tal";
         $user->save();
 

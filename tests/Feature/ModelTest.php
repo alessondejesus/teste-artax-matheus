@@ -1,7 +1,8 @@
 <?php
 
-namespace Tests\Exam;
+namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -78,9 +79,9 @@ class ModelTest extends TestCase
     {
         $user = User::factory()->make();
 
-        $user->name = 'fulano de tal';
+        $user->name = 'joão silva';
 
-        $this->assertEquals('Fulano de Tal', $user->name);
+        $this->assertEquals('João Silva', $user->name);
     }
 
     /**
@@ -109,7 +110,7 @@ class ModelTest extends TestCase
         Notification::fake();
 
         $user = User::factory()->create();
-
+        
         $user->password = 'secret';
         $user->save();
 
