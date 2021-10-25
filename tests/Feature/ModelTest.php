@@ -50,7 +50,7 @@ class ModelTest extends TestCase
 
         $this->assertEquals(BelongsTo::class, get_class($relationship), 'blogs->owner()');
 
-        $blog = new User();
+        $user = new User();
         $relationship = $blog->blogs();
 
         $this->assertEquals(HasMany::class, get_class($relationship), 'user->blogs()');
