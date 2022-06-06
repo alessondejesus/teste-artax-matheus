@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Blog;
 use Illuminate\Validation\ValidationException;
 
 /**
